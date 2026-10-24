@@ -1,7 +1,7 @@
 ---
 id: 'WT-0003'
 title: Lisbon TukTuk registry and tour booking
-status: draft
+status: active
 owner: Diogo
 ---
 
@@ -22,10 +22,7 @@ states and policies below.
 
 ## Success metric
 
-> **Proposal, numbers to be confirmed by the owner before the track becomes
-> `active`.**
-
-Measured over the first 8 weeks after launch in Lisbon:
+Confirmed by the owner on 2026-10-24. Measured over the first 8 weeks after launch in Lisbon:
 
 - **Operators keep availability current:** at least 10 approved operators,
   and at least 70% of them publish future slots every week.

@@ -16,12 +16,13 @@ acceptance:
 
 ## Proposta
 
-<Abordagem em 3-6 frases. Detalhe de implementação vai para a work-spec/plano do agente.>
+<Abordagem em 3-6 frases. Ficheiros, desenho e armadilhas vão para a work-spec
+(`make new-spec ITEM={{ID}}`), não para aqui (ADR-0006).>
 
 ## Fora de âmbito
 
 <Explícito. Cada omissão é uma decisão que o agente toma em silêncio.>
 
-## Notas para o agente
+## Em falta antes de codificar
 
-<Ficheiros relevantes, ADRs a ler, armadilhas conhecidas.>
+<Decisões, dados ou acessos que ainda faltam. Tem de ficar "Nada." antes de o item passar a ready.>

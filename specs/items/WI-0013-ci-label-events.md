@@ -1,7 +1,7 @@
 ---
 id: 'WI-0013'
 title: Re-run CI when a human-approval label changes
-status: in-progress
+status: done
 track: 'WT-0002'
 owner: Diogo
 acceptance:

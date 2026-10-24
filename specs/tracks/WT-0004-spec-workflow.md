@@ -1,7 +1,7 @@
 ---
 id: 'WT-0004'
 title: Four-layer spec workflow
-status: active
+status: done
 owner: Diogo
 ---
 
@@ -39,3 +39,17 @@ Out of scope:
 ## Work-items
 
 - WI-0012 — Work-spec tooling and validator rules
+
+## Closing
+
+Done on 2026-10-24. The track's decisions already live in canonical form in
+ADR-0006, so there is nothing left to promote.
+
+- First metric: met. `make validate-specs` rejects a `ready` or
+  `in-progress` item without an `approved` work-spec.
+- Second metric: can only be checked when the next feature track (WT-0003)
+  starts. If that start needs manual steps, they become a new work-item in
+  whichever track is active then.
+- After WI-0012, the work-item template still lacked "Em falta antes de
+  codificar" and still had "Notas para o agente". It was aligned with
+  ADR-0006 when the track closed.

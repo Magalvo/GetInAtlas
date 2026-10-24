@@ -13,6 +13,12 @@ Disponibilizar um CLI seguro e incremental que prepare projetos novos ou
 existentes para o workflow SDD/TDD e para coding agents sujeitos a gates
 determinísticos.
 
+## Métrica de sucesso
+
+Um projeto TypeScript existente adota o core com o CLI (descoberta → plano →
+aplicação → profile) e passa `make check` sem edições manuais; uma segunda
+aplicação é um no-op.
+
 ## Âmbito
 
 Inclui descoberta read-only, planos de adoção, instalação idempotente do core,

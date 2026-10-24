@@ -48,7 +48,5 @@ the README so the written rule matches what the tools enforce.
 
 ## Missing before coding
 
-- A human approves the change to AGENTS.md hard rule 1. It is the project's
-  constitution.
 - A human approves the change to `.github/workflows/ci.yml`. It is a gate the
   agent does not control (as in WI-0013).

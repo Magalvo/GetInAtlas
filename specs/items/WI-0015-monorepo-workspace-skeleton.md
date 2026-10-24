@@ -40,7 +40,5 @@ in `src/` stays where it is: this item adds structure and moves nothing.
 ## Missing before coding
 
 - ADR-0003 is accepted.
-- Confirm the default that `src/` stays in place in this item (an open point
-  of ADR-0003). Deciding whether to remove the WT-0001 example comes later.
 - This item touches the root configuration and CI, so it runs alone. Nothing
   else runs in parallel with it.

@@ -74,6 +74,9 @@ The policies this item relies on are settled in the
   review?
 - What happens to active bookings when an operator is suspended (WI-0006
   AC7)? Are they cancelled automatically, or left for the admin to decide?
+- **Formal gate (ADR-0005):** `formal/BookingSlot.tla` must exist, and
+  `make formal-check` must pass on the correct variant. TLC must also find
+  the race in the naive variant.
 
 ## Notes for the agent
 

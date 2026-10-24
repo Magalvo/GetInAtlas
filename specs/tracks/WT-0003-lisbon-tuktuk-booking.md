@@ -80,13 +80,17 @@ second track needs them.
 
 ## Architecture decisions
 
-All are proposed, and must be accepted before the first item is `ready`:
+Their open points were settled on 2026-10-24 (#6):
 
 - [ADR-0003](../../docs/adr/0003-platform-and-stack.md): platform and stack
+  (Neon, Render, Cloudflare R2). It must be accepted before WI-0015.
 - [ADR-0004](../../docs/adr/0004-authentication-and-roles.md): authentication
-  and roles (accepted only after a spike)
+  and roles (Better Auth, Bird SMS). It is accepted only after the spike
+  (item 4) confirms the library plugins and Bird's pricing and fraud
+  protection.
 - [ADR-0005](../../docs/adr/0005-booking-concurrency-and-persistence.md):
-  booking concurrency enforced in Postgres
+  booking concurrency enforced in Postgres. The TLA+ model is a gate for
+  WI-0008. It must be accepted before WI-0016.
 
 ## Work-items
 

@@ -25,3 +25,4 @@ de negócio e a ratificação automática de contratos ficam fora do âmbito.
 - WI-0003 — aplicação segura e idempotente do core
 - WI-0004 — hooks e setup portáteis em Windows
 - WI-0005 — profile TypeScript estrito
+- WI-0011 — isolar os testes do ambiente git dos hooks

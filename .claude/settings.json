@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/stop-gate.mjs\"",
+            "timeout": 600,
+            "statusMessage": "make check antes de terminar (WI-0017)"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -48,6 +48,7 @@ Out of scope:
 
 - WI-0014 — Let the agent propose acceptance tests and remove expected-failure
   markers
+- WI-0017 — Stop hook that keeps the agent working while make check is red
 - _(rough)_ Validator rule: no `.fails` left in a `done` item; the work-spec
   test plan states acceptance or unit level per AC
 - _(rough)_ `context:` and `issue:` fields on work-items, validated

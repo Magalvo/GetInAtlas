@@ -2,7 +2,7 @@
 id: 'WS-0015'
 title: 'Monorepo workspace skeleton'
 item: 'WI-0015'
-status: draft
+status: approved
 owner: 'Diogo'
 ---
 
@@ -64,8 +64,9 @@ separate builds (WI-0016 and the PWA skeleton).
    This adds a rule and disables none (AGENTS.md hard rule 3).
    `types: []` in the domain's `tsconfig.json` is the second layer.
 
-6. **Docs.** The structure table in AGENTS.md gains `packages/` (pure
-   domain, no I/O) and `apps/` (deployable apps), with links to ADR-0003.
+6. **Docs.** The AGENTS.md structure table (`packages/` for the pure domain,
+   `apps/` for deployable apps) is **not** updated here. It moves to the
+   first item that creates `apps/` (the owner chose option (a) below).
 
 ## Files to change
 
@@ -85,14 +86,12 @@ separate builds (WI-0016 and the PWA skeleton).
 | 12  | `packages/domain/src/index.ts`            | new (placeholder export)                        |
 | 13  | `packages/domain/src/index.test.ts`       | new                                             |
 | 14  | `tests/unit/workspace-boundaries.test.ts` | new: AC1 build, AC3 boundary                    |
-| 15  | `AGENTS.md`, `specs/items/WI-0015-…`      | structure table; item status                    |
+| 15  | `specs/items/WI-0015-…`                   | item status                                     |
 
-That is **16 files**: one over the 15-file budget, at about 200 lines. Two
-ways out, and you choose:
-
-- **(a, recommended)** move the AGENTS.md table update to the PWA or API
-  skeleton item, the first one that adds `apps/`, which leaves 15 files;
-- **(b)** a conscious `diff-budget-override` on the PR.
+That is **15 files**, exactly the budget, at about 200 lines. The first plan
+had 16. The owner chose option (a): the AGENTS.md structure update moves to
+the first item that adds `apps/`. The alternative, (b), was a
+`diff-budget-override` on the PR.
 
 ## Test plan
 
@@ -126,13 +125,13 @@ behaviour, so ADR-0007 lets it verify its ACs at the unit level.
 
 ## Assumptions and questions
 
-- **Question: npm scope.** Is it `@getinatlas/`? It appears in package names
-  and in the boundary rule.
-- **Question: diff budget.** Option (a), moving the AGENTS.md update to the
-  first `apps/` item, or option (b), an override label?
-- **Approval needed: gates.** This plan changes `lefthook.yml` and
-  `.github/workflows/ci.yml`, though only to call the same npm scripts.
-  Approving this work-spec approves those two changes.
+**Approved by the owner on 2026-10-24**, with these answers:
+
+- **npm scope:** `@getinatlas/`.
+- **Diff budget:** option (a). The AGENTS.md update moves to the first
+  `apps/` item.
+- **Gates:** the changes to `lefthook.yml` and `.github/workflows/ci.yml`
+  (calling the npm scripts) are approved with this plan.
 - **Assumption:** no TypeScript project references and no per-package
   scripts until a second deployable package exists.
 - **Assumption:** the domain placeholder is replaced by real domain types in

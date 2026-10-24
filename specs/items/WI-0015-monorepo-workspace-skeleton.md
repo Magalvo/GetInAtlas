@@ -1,7 +1,7 @@
 ---
 id: 'WI-0015'
 title: Monorepo workspace skeleton
-status: draft
+status: ready
 track: 'WT-0003'
 owner: Diogo
 acceptance:
@@ -39,6 +39,7 @@ in `src/` stays where it is: this item adds structure and moves nothing.
 
 ## Missing before coding
 
-- ADR-0003 is accepted.
-- This item touches the root configuration and CI, so it runs alone. Nothing
-  else runs in parallel with it.
+Nothing. ADR-0003 is accepted and WS-0015 is approved.
+
+This item touches the root configuration and CI, so nothing else that
+touches them runs in parallel with it.

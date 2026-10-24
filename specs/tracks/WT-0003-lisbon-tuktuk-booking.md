@@ -108,24 +108,29 @@ one-run size. The rest stay coarse until just before they start. The coarse
 items (WI-0006 to WI-0010) have 9 to 15 ACs each and are split again when
 their turn comes.
 
-| #   | Item                                                                        | Size       | Depends on       |
-| --- | --------------------------------------------------------------------------- | ---------- | ---------------- |
-| 1   | WI-0015 — Monorepo workspace skeleton                                       | split      | ADR-0003         |
-| 2   | WI-0016 — API skeleton with Postgres in the gate                            | split      | WI-0015          |
-| 3   | _(rough)_ PWA skeleton on the same domain as the API                        | not split  | WI-0015          |
-| 4   | _(rough)_ Authentication spike, then sign-in                                | not split  | WI-0016          |
-| 5   | WI-0006 — Operator and vehicle onboarding                                   | coarse, 10 | 3, 4             |
-| 6   | WI-0007 — Tours and time slots                                              | coarse, 12 | WI-0006          |
-| 7   | WI-0008 — Slot booking and cancellation                                     | coarse, 15 | WI-0007          |
-| 8   | WI-0009 — Operator reviews                                                  | coarse, 9  | WI-0008          |
-| 9   | WI-0010 — No-show strikes and disputes                                      | coarse, 9  | WI-0008          |
-| 10  | _(rough)_ Operator accountability: cancellation rate and admin review queue | not split  | WI-0008, WI-0010 |
+| #   | Item                                                                                      | Size       | Depends on       |
+| --- | ----------------------------------------------------------------------------------------- | ---------- | ---------------- |
+| 1   | WI-0015 — Monorepo workspace skeleton                                                     | split      | ADR-0003         |
+| 2   | WI-0016 — API skeleton with Postgres in the gate                                          | split      | WI-0015          |
+| 3   | _(rough)_ PWA skeleton on the same domain as the API, plus the AGENTS.md structure update | not split  | WI-0015          |
+| 4   | _(rough)_ Authentication spike, then sign-in                                              | not split  | WI-0016          |
+| 5   | WI-0006 — Operator and vehicle onboarding                                                 | coarse, 10 | 3, 4, WI-0014    |
+| 6   | WI-0007 — Tours and time slots                                                            | coarse, 12 | WI-0006          |
+| 7   | WI-0008 — Slot booking and cancellation                                                   | coarse, 15 | WI-0007          |
+| 8   | WI-0009 — Operator reviews                                                                | coarse, 9  | WI-0008          |
+| 9   | WI-0010 — No-show strikes and disputes                                                    | coarse, 9  | WI-0008          |
+| 10  | _(rough)_ Operator accountability: cancellation rate and admin review queue               | not split  | WI-0008, WI-0010 |
 
 **Parallelism**, following the rule "items that don't touch the same files
 can run in parallel":
 
 - Items 1 and 2 run in sequence, because both touch the root configuration
   and CI.
+- **WI-0014 (WT-0005) must be done before WI-0006.** WI-0006 is the first
+  item with product behaviour, so its acceptance tests are ratified through
+  ADR-0007, which WI-0014 implements. WI-0014 can run alongside items 1 and 2
+  only if the work-specs show they don't share files. Both touch `ci.yml`, so
+  by default they run in sequence.
 - After item 2, items 3 and 4 can run in parallel.
 - After item 7, items 8 and 9 can run in parallel. The dispute path of
   WI-0009 AC1 is only exercised once WI-0010 lands.

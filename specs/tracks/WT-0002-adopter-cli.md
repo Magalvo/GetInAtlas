@@ -32,3 +32,4 @@ de negócio e a ratificação automática de contratos ficam fora do âmbito.
 - WI-0004 — hooks e setup portáteis em Windows
 - WI-0005 — profile TypeScript estrito
 - WI-0011 — isolar os testes do ambiente git dos hooks
+- WI-0013 — CI volta a correr quando uma label de aprovação humana muda

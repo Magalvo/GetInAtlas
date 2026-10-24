@@ -10,6 +10,9 @@
 name: CI
 on:
   pull_request:
+    # labeled/unlabeled: as labels de aprovação humana (diff-budget-override,
+    # contract-change-approved) só contam num evento novo. Ver WI-0013.
+    types: [opened, synchronize, reopened, labeled, unlabeled]
   push:
     branches: [main]
 

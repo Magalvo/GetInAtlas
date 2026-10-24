@@ -29,9 +29,10 @@ jobs:
       - run: npm ci
       - run: npx prettier --check .
       - run: node scripts/validate-specs.mjs
-      - run: npx tsc --noEmit
-      - run: npx eslint src tests scripts
-      - run: npx vitest run
+      # Os mesmos scripts npm que o make e o lefthook correm (WI-0015).
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run test
 
   contract:
     name: Proteção do contrato (tests/acceptance)

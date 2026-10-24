@@ -1,0 +1,8 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    /* Sem tipos do Node: o domínio não faz I/O (ADR-0003). */
+    "types": []
+  },
+  "include": ["src/**/*.ts"]
+}

@@ -1,6 +1,6 @@
 # ADR-0007 — The agent proposes acceptance tests, a human ratifies them
 
-- **Estado:** proposto
+- **Estado:** aceite
 - **Data:** 2026-10-24
 - **Decisor(es):** Diogo
 

@@ -48,13 +48,26 @@ A monorepo of npm workspaces:
 - `packages/domain`: pure TypeScript domain logic (state machines, rules,
   Zod schemas), with no I/O, shared by the API and the web app
 
-The database is managed PostgreSQL 16+ in an EU region (Neon, or Postgres
-hosted by Supabase), accessed through Drizzle ORM with SQL migrations
-(constraints are written in raw SQL). The API runs on a PaaS in an EU region
-(Fly.io or Render), with the PWA served from the same registrable domain.
-Background jobs run on a Postgres-backed queue (pg-boss), so there's no
-Redis. Operator documents go in private, EU-located, S3-compatible object
-storage.
+The database is managed PostgreSQL 16+ on **Neon**, in an EU region
+(Frankfurt), accessed through Drizzle ORM with SQL migrations (constraints are
+written in raw SQL). The API runs on **Render**, in an EU region (Frankfurt),
+with the PWA served from the same registrable domain. Background jobs run on
+a Postgres-backed queue (pg-boss), as a separate Render background worker, so
+there's no Redis. Operator documents go in a private **Cloudflare R2** bucket
+with EU jurisdiction, behind short-lived signed URLs.
+
+Why these vendors (settled 2026-10-24):
+
+- **Neon over Supabase:** Neon is only Postgres. Supabase bundles auth,
+  storage and RLS, which this ADR and ADR-0004 reject. Neon also gives each
+  PR its own database branch, which suits several agents working in
+  parallel.
+- **Render over Fly.io:** for one person, Render means less operations work:
+  deploy on git push, a preview environment per PR, and a background worker
+  as just another service.
+- **R2 over Scaleway or S3:** R2 speaks the S3 API, can keep data under EU
+  jurisdiction, and charges nothing for egress. Scaleway would be the
+  sovereignty-first alternative, if a customer or regulator ever asks for it.
 
 ## Consequências
 
@@ -73,6 +86,10 @@ Worse:
 - A PWA gets weaker push notifications on iOS, and no background location.
 - The monorepo tooling (workspaces, shared tsconfig and ESLint config) adds
   setup work.
+- Neon scales to zero, so the first request after a quiet period pays a cold
+  start. pg-boss needs a direct connection, not the pooled one.
+- Cloudflare is a US company. Data stored under EU jurisdiction is still
+  subject to the US CLOUD Act.
 
 Now mandatory:
 
@@ -88,9 +105,7 @@ Diff budget: setting up the monorepo will exceed 15 files / 800 lines. Split
 it across several small work-items (workspace skeleton → domain package → API
 skeleton → web skeleton) rather than asking for a budget exception.
 
-Open, to settle while scaffolding:
-
-- Neon or Supabase Postgres, and Fly.io or Render
-- the object storage vendor
-- whether the existing `src/` (adopter CLI and order example) moves to
-  `packages/` or stays where it is until a cleanup work-item
+The existing `src/` (adopter CLI and order example) **stays where it is**.
+The monorepo skeleton (WI-0015) moves nothing. Moving or removing it is a
+later cleanup item. That item would touch `tests/acceptance/`, which makes it
+a contract change.

@@ -46,11 +46,29 @@ checked in the API, never only in the client:
 - Every account is a traveller.
 - `operator` is granted only by the WI-0006 approval transition.
 - `admin` is granted only by a seed or migration, never through the product.
+- One account can hold both `traveller` and `operator`, and each request
+  checks the role it needs. An operator can't book their own slots, so they
+  can't inflate their own reviews.
+
+**Minimum age:** travellers declare they are 18 or older when they accept the
+terms. Nothing verifies it. The rule keeps us outside GDPR article 8 (parental
+consent), and a booking is a commitment.
 
 **Phone verification:** a traveller must verify a phone number by SMS one-time
 code (OTP) before their first booking. Each normalised (E.164) phone number
 can belong to at most one account, enforced by a unique constraint. Operators
 also verify a phone number during onboarding.
+
+The SMS provider is **Bird** (formerly MessageBird), a Dutch company. It
+keeps the vendor in the EU, and its Verify API doesn't charge for checking a
+code, only for each send. The free alternatives were rejected for the MVP:
+
+- **Reverse WhatsApp or Telegram verification** (the traveller sends us a
+  code or shares their contact) costs nothing per verification. But
+  travellers without either app are left out, and the data goes through Meta
+  or Telegram.
+- **Dropping phone verification** would let a blocked traveller escape their
+  strikes with a new email.
 
 **Admins must use two-factor authentication** (TOTP).
 
@@ -84,11 +102,19 @@ Now forbidden:
 - Admin accounts without two-factor authentication.
 - Showing a traveller's phone number to an operator before the booking exists.
 
-Open:
+**Acceptance is conditional on a spike** (settled 2026-10-24). This ADR stays
+`proposto` until a spike work-item (WT-0003, item 4) confirms all of the
+following. If any check fails, the ADR is revised before it is accepted.
 
-- The SMS provider (Twilio Verify, MessageBird or another).
-- Whether one account can be both traveller and operator. The assumed default
-  is yes, with separate role checks.
-- A minimum age for travellers.
-- The auth library's plugin coverage (magic link, phone OTP, two-factor) must
-  be confirmed in a spike before this ADR is accepted.
+- **Better Auth:** its plugins cover magic link, phone OTP with a custom SMS
+  sender, and TOTP two-factor authentication.
+- **Bird Verify:**
+  - it sends to Portuguese and foreign numbers from an EU account;
+  - its per-SMS price for our main destination countries, which Bird quotes
+    on request rather than publishing;
+  - whether fraud protection against SMS pumping is included, or a paid
+    add-on;
+  - its product status, since Bird's verification product page says it is
+    "being upgraded".
+
+  If Bird fails these checks, Twilio Verify is the fallback.

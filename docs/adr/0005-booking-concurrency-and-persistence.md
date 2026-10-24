@@ -101,9 +101,12 @@ Now mandatory:
 - Every new state transition follows the conditional-update rule (I6).
 - Migrations that add or change these constraints need a human review.
 
-Open:
+Settled (2026-10-24):
 
-- Whether `btree_gist` is available on the chosen managed Postgres. Neon and
-  Supabase are believed to support it; confirm during scaffolding.
-- Whether to make the TLA+ model a gate for WI-0008 (`ready` requires
-  `make formal-check` to pass) or only recommended.
+- **`btree_gist`:** Neon is the chosen host (ADR-0003). The first migration
+  enables the extension, and WI-0016 AC4 checks that it is there. If Neon
+  turns out not to offer it, this ADR has to be revised before WI-0007.
+- **The TLA+ model is a gate.** WI-0008 can't become `ready` until
+  `formal/BookingSlot.tla` exists, `make formal-check` passes on the correct
+  variant, and TLC finds the race in the naive one. Bookings are the
+  product's critical core: one resource, never two owners.

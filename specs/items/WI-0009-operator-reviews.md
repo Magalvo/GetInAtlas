@@ -8,10 +8,12 @@ acceptance:
   - AC1: only the traveller of a `completed` booking can review it — whether completed automatically (WI-0008 AC11) or by an upheld dispute (WI-0010 AC6)
   - AC1b: a booking marked `no_show` cannot be reviewed while the no-show stands
   - AC2: at most one review per booking
-  - AC3: a review has an integer rating 1-5 and optional text up to a maximum length
-  - AC4: the review window closes N days after the booking became `completed`; later submissions are rejected
+  - AC3: a review has an integer rating 1-5 and optional text of up to 1000 characters
+  - AC4: the review window closes 14 days after the booking became `completed`; later submissions are rejected
   - AC5: an operator's rating is the mean of their reviews, shown with the review count; operators with zero reviews show "new", not 0
   - AC6: an operator can post one public reply per review; they cannot edit or delete the review
+  - AC7: any signed-in user can report a review with a reason; an admin hides it or keeps it, and the review stays visible until the decision
+  - AC8: a traveller can edit their review while the window is open; an edited review shows "edited", and earlier versions are kept for moderation
 ---
 
 # WI-0009 — Operator reviews after completed bookings
@@ -45,12 +47,7 @@ disputed, and if the traveller wins, the booking becomes reviewable
 
 ## Missing before coding
 
-- **Review window (N days)** for AC4, counted from completion, not slot end,
-  because a dispute can complete a booking late. Also the **maximum text
-  length** for AC3.
-- Moderation: can travellers or operators report a review, and does an admin
-  decide?
-- Can a traveller edit their review, and if so, for how long?
+Nothing.
 
 ## Notes for the agent
 

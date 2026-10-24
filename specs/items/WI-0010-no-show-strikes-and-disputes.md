@@ -8,11 +8,12 @@ acceptance:
   - AC1: each booking marked `no_show` (WI-0008) gives the traveller one strike, dated at slot start
   - AC2: a traveller with 2 counting strikes whose dates fall within the last 90 days is blocked from new bookings for 30 days from the second strike
   - AC3: a blocked traveller's booking attempt is rejected with the date the block ends
-  - AC4: a traveller can dispute a no-show within 7 days of being marked; later disputes are rejected
+  - AC4: a traveller can dispute a no-show within 7 days of being marked, with a mandatory explanation of up to 1000 characters; later disputes are rejected
   - AC5: a strike under dispute does not count towards AC2 until resolved
   - AC6: only an admin resolves a dispute; upholding it removes the strike and moves the booking from `no_show` to `completed` (making it reviewable, WI-0009)
   - AC7: rejecting a dispute keeps the strike, which counts from its original date
   - AC8: an admin can lift an active block early, with a mandatory reason
+  - AC9: a block prevents new bookings only; the traveller's existing future bookings are kept
 ---
 
 # WI-0010 — No-show strikes and disputes
@@ -43,17 +44,13 @@ The policies this item relies on are settled in the
 
 - Operators disputing or appealing anything
 - Automated evidence (GPS check-in at the meeting point, photos)
-- Penalties for operators who mark false no-shows (see Open questions)
+- Reviewing operators who lose disputes often: the WT-0003 item on operator
+  accountability
 - Notifications about strikes and blocks (they belong to the notifications WI)
 
 ## Missing before coding
 
-- **Existing bookings when blocked:** are the traveller's existing future
-  bookings kept, or cancelled? The assumed default is that they are kept.
-- **Operators who abuse no-shows:** if an operator loses many disputes,
-  should an admin review them automatically? This links to WI-0006
-  suspension.
-- Does the dispute need a free-text explanation, and how long can it be?
+Nothing.
 
 ## Notes for the agent
 

@@ -17,6 +17,9 @@ acceptance:
   - AC10: an operator can mark a booking `no_show` only between slot end and slot end + 24h
   - AC11: a booking still `active` 24h after slot end becomes `completed` automatically
   - AC12: the booking state machine rejects every transition not listed in the spec (e.g. cancelled → active, completed → cancelled, no_show → completed except via WI-0010 dispute)
+  - AC13: a slot that starts in less than 60 minutes (platform constant) cannot be booked
+  - AC14: 'the booking shows its total in integer cents, base price + per-person price × party size, marked "pay on site"'
+  - AC15: suspending an operator (WI-0006 AC7) cancels their active future bookings as `cancelled_by_operator`, with the reason "operator suspended" shown to the traveller
 ---
 
 # WI-0008 — Slot booking and cancellation
@@ -66,14 +69,11 @@ The policies this item relies on are settled in the
 - Booking on behalf of someone else, and group bookings across several
   vehicles
 - Operators changing the cutoff
+- Consequences for operators who cancel often: the WT-0003 item on operator
+  accountability
 
 ## Missing before coding
 
-- **Operator cancellations:** is there any consequence for operators who
-  cancel often, such as being visible on their profile or triggering admin
-  review?
-- What happens to active bookings when an operator is suspended (WI-0006
-  AC7)? Are they cancelled automatically, or left for the admin to decide?
 - **Formal gate (ADR-0005):** `formal/BookingSlot.tla` must exist, and
   `make formal-check` must pass on the correct variant. TLC must also find
   the race in the naive variant.

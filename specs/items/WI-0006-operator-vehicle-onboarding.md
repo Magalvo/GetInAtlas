@@ -5,14 +5,16 @@ status: draft
 track: 'WT-0003'
 owner: Diogo
 acceptance:
-  - AC1: an operator application missing any required field or document is rejected with the list of missing items
+  - AC1: an operator application missing any document on the required-documents list (configuration) is rejected with the list of missing items
   - AC2: a new operator starts in `pending_review` and cannot publish tours
   - AC3: only an admin can move an operator from `pending_review` to `approved` or `rejected`
   - AC4: rejecting an operator requires a non-empty reason, which is shown to the operator
   - AC5: a vehicle's licence plate is unique across the platform (case and whitespace insensitive)
-  - AC6: a vehicle's seating capacity is an integer between 1 and the regulatory maximum
+  - AC6: a vehicle's seating capacity is an integer between 1 and the platform maximum, a named constant that defaults to 6
   - AC7: an admin can suspend an approved operator; a suspended operator's future slots are no longer bookable
   - AC8: an operator's public profile shows only approved data (name, photo, vehicle, languages, rating), never their documents
+  - AC9: an operator is either a company or a sole trader, and can register one or more vehicles
+  - AC10: a rejected operator can re-apply no sooner than 30 days after the rejection, at most 3 times; an earlier or a 4th application is rejected with the reason
 ---
 
 # WI-0006 — Operator and vehicle onboarding with admin approval
@@ -42,15 +44,16 @@ operator gets a public profile. The state is a discriminated union, as in
 
 ## Missing before coding
 
-- **Which documents are legally required** for a TukTuk in Lisbon (tourism
-  operator registration, municipal permit, insurance, driving licence
-  category)? This defines AC1's required-field list. It needs a check with
-  someone who knows the local regulations.
-- **Maximum seating capacity** for AC6: what is the legal limit for this type
-  of vehicle?
-- Is one operator a company with several drivers, or one person? This changes
-  whether `Driver` is a separate entity from `Operator`.
-- Can a rejected operator re-apply, and if so, how many times?
+- **Legal check of the required documents (AC1).** Someone who knows
+  Lisbon's regulations must validate the provisional list, which lives in
+  configuration:
+  - RNAAT registration with Turismo de Portugal (tourism activity)
+  - civil liability insurance
+  - a driving licence for the vehicle's category
+  - the vehicle's registration document
+  - a municipal licence, if one exists
+- **Legal check of the seating capacity (AC6).** Confirm that 6 is the legal
+  limit for the vehicles in use.
 
 ## Notes for the agent
 

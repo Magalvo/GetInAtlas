@@ -13,16 +13,16 @@ Traveller 1 ── N  Booking
 Booking   1 ── 0..1 Review
 ```
 
-| Entity        | What it is                                                                                                         |
-| ------------- | ------------------------------------------------------------------------------------------------------------------ |
-| **Operator**  | Someone who offers experiences. Today, a TukTuk operator. Later, also local guides with no vehicle.                |
-| **Vehicle**   | A vehicle that belongs to one operator. Optional for future operators that offer no ride.                          |
-| **Tour**      | What an operator offers: a description, a duration, a price and a meeting point.                                   |
-| **Slot**      | A concrete start time for a tour. A slot occupies its whole vehicle.                                               |
-| **Booking**   | A traveller's commitment to a slot. With payment on site, the app is the only record of that commitment.           |
-| **Review**    | A traveller's rating of an operator, tied to one completed booking.                                                |
-| **Traveller** | Someone who books. Every account is a traveller (ADR-0004 roles).                                                  |
-| **Admin**     | Someone on the platform staff who approves operators and resolves disputes. A role, not a separate kind of person. |
+| Entity        | What it is                                                                                                                                         |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Operator**  | A company or sole trader who offers experiences. Today, a TukTuk operator. Later, also local guides with no vehicle. Drivers are not modelled yet. |
+| **Vehicle**   | A vehicle that belongs to one operator. Optional for future operators that offer no ride.                                                          |
+| **Tour**      | What an operator offers: a description, a duration, a price and a meeting point.                                                                   |
+| **Slot**      | A concrete start time for a tour. A slot occupies its whole vehicle.                                                                               |
+| **Booking**   | A traveller's commitment to a slot. With payment on site, the app is the only record of that commitment.                                           |
+| **Review**    | A traveller's rating of an operator, tied to one completed booking.                                                                                |
+| **Traveller** | Someone who books. Every account is a traveller (ADR-0004 roles).                                                                                  |
+| **Admin**     | Someone on the platform staff who approves operators and resolves disputes. A role, not a separate kind of person.                                 |
 
 ## Naming decisions
 

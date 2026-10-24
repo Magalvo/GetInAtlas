@@ -6,15 +6,17 @@ track: 'WT-0003'
 owner: Diogo
 acceptance:
   - AC1: only an approved operator can create a tour
-  - AC2: a tour has a title, description, duration in minutes, price in integer euro cents, languages, meeting point and one of the operator's vehicles
-  - AC3: a price that is negative, non-integer or not in cents is rejected
+  - AC2: a tour has a title, description, duration in minutes, a base price and a per-person price in integer euro cents, languages, a meeting point, a route and one of the operator's vehicles
+  - AC3: a base or per-person price that is negative or not a whole number of cents is rejected
   - AC4: an operator can publish slots for a tour; a slot's start is stored in UTC and shown in Europe/Lisbon time
   - AC5: two slots on the same vehicle cannot overlap in time, where each slot occupies start to start + duration + the vehicle's buffer
   - AC5b: each vehicle has a turnaround buffer, an integer number of minutes from 0 to 60, default 15, set by its operator
   - AC5c: changing a vehicle's buffer is rejected if it would make existing future slots overlap
   - AC6: a slot in the past cannot be created
-  - AC7: travellers can list available slots for a date range, filtered by language, excluding past, booked, cancelled and suspended-operator slots
+  - AC7: travellers can list available slots for a date range, filtered by language, excluding past, booked, cancelled and suspended-operator slots, and slots that start within the minimum lead time (60 min)
   - AC8: deleting a slot that has an active booking is rejected; the operator must cancel it instead (WI-0008)
+  - AC9: a tour whose meeting point lies inside a restricted zone is rejected, naming the zone
+  - AC10: a tour whose route crosses a restricted zone is rejected, naming the zone
 ---
 
 # WI-0007 — Tours and time slots
@@ -37,8 +39,9 @@ Price is shown for information only, because payment happens on site.
 
 - Recurring schedules ("every day at 10:00"). Slots are created one at a time
   or in a simple batch in v1.
-- Per-person pricing and group-size tiers. There is one price per slot.
-- Route maps and GPS tracks. The route is text plus a meeting-point pin.
+- Group-size tiers beyond a base price plus a per-person price
+- GPS tracking during the tour. The route is a line the operator draws, used
+  for the zone checks and shown to travellers.
 - Discovery by map (that belongs to the future beacon track)
 
 ## Policies
@@ -48,13 +51,15 @@ The policies this item relies on are settled in the
 
 ## Missing before coding
 
-- Is the price for the whole vehicle regardless of group size, or does it
-  depend on group size?
-- Can a traveller book a slot that starts in less than N minutes? This sets
-  the minimum lead time.
-- Are there municipal restrictions on routes or zones (for example areas of
-  the historic centre closed to TukTuks) that the app has to enforce, or only
-  show?
+- **Restricted zones (AC9, AC10).** We need the source data: Lisbon's
+  municipal rules for TukTuks, drawn as polygons. Someone has to provide it,
+  and someone has to keep it current.
+- **When the zones change,** what happens to existing tours that no longer
+  comply? They could be flagged to the admin, or hidden automatically.
+- **Geometry.** The route checks need a map component in the PWA and
+  geometry in `packages/domain`, which must stay pure TypeScript
+  (ADR-0003). Decide the library, and whether drawing the route becomes its
+  own item when WI-0007 is split.
 
 ## Notes for the agent
 

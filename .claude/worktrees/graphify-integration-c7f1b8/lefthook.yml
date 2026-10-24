@@ -1,0 +1,34 @@
+# Camada 3/4 — hooks de pre-commit.
+# Instalação: `npm install` corre `lefthook install` automaticamente (script prepare).
+#
+# Regra mais importante: tests/acceptance/ é INTOCÁVEL pelo agente.
+# Alterar o contrato é uma decisão humana: exige ACCEPT_CONTRACT_CHANGE=1
+# e deve ser acompanhada de um ADR a justificar a mudança.
+
+pre-commit:
+  parallel: false
+  commands:
+    protect-acceptance:
+      priority: 1
+      run: node scripts/protect-contract.mjs
+    format:
+      priority: 2
+      run: npx prettier --check .
+      fail_text: "corre 'make format' para corrigir"
+    validate-specs:
+      priority: 3
+      run: node scripts/validate-specs.mjs
+    typecheck:
+      priority: 4
+      run: npx tsc --noEmit
+    lint:
+      priority: 5
+      run: npx eslint src tests scripts
+    test:
+      priority: 6
+      run: npx vitest run
+
+pre-push:
+  commands:
+    diff-budget:
+      run: node scripts/report-diff-budget.mjs # informativo local; bloqueante no CI

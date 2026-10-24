@@ -1,0 +1,30 @@
+{"id":"ic-001","input":"Quero cancelar a minha encomenda de ontem","expected":"cancel_order"}
+{"id":"ic-002","input":"Onde está o meu pacote?","expected":"track_order"}
+{"id":"ic-003","input":"Ainda não recebi nada e já passou uma semana","expected":"track_order"}
+{"id":"ic-004","input":"Como posso devolver um artigo?","expected":"return_item"}
+{"id":"ic-005","input":"O produto chegou partido, quero o dinheiro de volta","expected":"refund"}
+{"id":"ic-006","input":"Quero falar com uma pessoa real","expected":"human_agent"}
+{"id":"ic-007","input":"Qual é o estado da encomenda #4512?","expected":"track_order"}
+{"id":"ic-008","input":"Enganei-me na morada, ainda vou a tempo de mudar?","expected":"change_order"}
+{"id":"ic-009","input":"Podem trocar o tamanho M por L?","expected":"change_order"}
+{"id":"ic-010","input":"Cancelem tudo, já não quero","expected":"cancel_order"}
+{"id":"ic-011","input":"Fui cobrado duas vezes","expected":"refund"}
+{"id":"ic-012","input":"Isto é uma vergonha, passem-me a um humano","expected":"human_agent"}
+{"id":"ic-013","input":"Preciso da fatura da minha última compra","expected":"invoice"}
+{"id":"ic-014","input":"Podem enviar-me o recibo por email?","expected":"invoice"}
+{"id":"ic-015","input":"A transportadora diz que entregou mas eu não recebi","expected":"track_order"}
+{"id":"ic-016","input":"Quero anular a devolução que pedi","expected":"return_item"}
+{"id":"ic-017","input":"O reembolso ainda não caiu na minha conta","expected":"refund"}
+{"id":"ic-018","input":"É possível adiar a entrega para a próxima semana?","expected":"change_order"}
+{"id":"ic-019","input":"cancela lá isso sff","expected":"cancel_order"}
+{"id":"ic-020","input":"preciso de ajuda com uma coisa que comprei","expected":"human_agent"}
+{"id":"ic-021","input":"O código de rastreio não funciona","expected":"track_order"}
+{"id":"ic-022","input":"Quero devolver e receber o dinheiro","expected":"refund"}
+{"id":"ic-023","input":"Comprei por engano, como anulo a compra?","expected":"cancel_order"}
+{"id":"ic-024","input":"Falta um artigo na caixa que recebi","expected":"human_agent"}
+{"id":"ic-025","input":"Preciso da fatura com NIF para a empresa","expected":"invoice"}
+{"id":"ic-026","input":"onde anda a minha cena que comprei na semana passada??","expected":"track_order"}
+{"id":"ic-027","input":"Afinal quero manter a encomenda, ignorem o cancelamento","expected":"change_order"}
+{"id":"ic-028","input":"O artigo veio com defeito mas prefiro trocar em vez de reembolso","expected":"return_item"}
+{"id":"ic-029","input":"Não consigo pagar, o site dá erro no cartão","expected":"human_agent"}
+{"id":"ic-030","input":"Quanto tempo demora a chegar uma encomenda para os Açores?","expected":"human_agent"}

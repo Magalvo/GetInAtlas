@@ -1,0 +1,40 @@
+{
+  "name": "ai-dd-boilerplate",
+  "version": "0.1.0",
+  "description": "Boilerplate para desenvolvimento AI-driven com SDD/TDD e defesa em profundidade",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "ai-sdd": "./dist/adopter/cli.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src tests scripts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:acceptance": "vitest run tests/acceptance",
+    "test:properties": "vitest run tests/properties",
+    "validate:specs": "node scripts/validate-specs.mjs",
+    "check:diff-budget": "node scripts/check-diff-budget.mjs",
+    "prepare": "node scripts/install-hooks.mjs",
+    "prepack": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "eslint": "^9.17.0",
+    "fast-check": "^3.23.0",
+    "lefthook": "^1.10.0",
+    "prettier": "^3.4.0",
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.19.0",
+    "vitest": "^2.1.0",
+    "yaml": "^2.6.0",
+    "zod": "^3.24.0"
+  }
+}

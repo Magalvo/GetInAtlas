@@ -1,0 +1,10 @@
+{
+  "$comment": "⚠ CONTRATO — protegido pelo hook, como tests/acceptance/. Baixar um threshold é decisão humana (ACCEPT_CONTRACT_CHANGE=1 + ADR). Thresholds definem-se pelo custo do erro, não pelo que o modelo consegue hoje.",
+  "datasets": {
+    "intent-classification": {
+      "metric": "exact_match",
+      "min": 0.5,
+      "subject": "evals/subjects/intent-classifier.mjs"
+    }
+  }
+}

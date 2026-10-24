@@ -1,0 +1,8 @@
+node_modules/
+dist/
+coverage/
+*.log
+.env
+.env.*
+formal/tla2tools.jar
+formal/states/

@@ -1,0 +1,64 @@
+# Camada 5 — verificação independente. Corre num ambiente que o agente não controla.
+# Mesmo que o agente contorne hooks locais (--no-verify), aqui não passa.
+#
+# Proteções recomendadas no GitHub (Settings → Branches → main):
+#   - Require pull request + 1 review humano
+#   - Require status checks: check, contract, diff-budget
+#   - Bloquear force-push
+# E em Settings → Code review: CODEOWNERS para tests/acceptance/ e .github/.
+
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    name: Lint · Types · Testes · Specs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx prettier --check .
+      - run: node scripts/validate-specs.mjs
+      - run: npx tsc --noEmit
+      - run: npx eslint src tests scripts
+      - run: npx vitest run
+
+  contract:
+    name: Proteção do contrato (tests/acceptance)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Falhar se o contrato mudou sem label de aprovação humana
+        run: |
+          CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD -- tests/acceptance/ evals/datasets/ evals/thresholds.json || true)
+          HAS_LABEL='${{ contains(github.event.pull_request.labels.*.name, 'contract-change-approved') }}'
+          if [ -n "$CHANGED" ] && [ "$HAS_LABEL" != "true" ]; then
+            echo "::error::O contrato (tests/acceptance/ · evals/datasets/ · evals/thresholds.json) foi alterado:"
+            echo "$CHANGED"
+            echo "::error::Exige a label 'contract-change-approved' (decisão humana) + ADR."
+            exit 1
+          fi
+          echo "✓ Contrato intacto ou alteração aprovada por humano."
+
+  diff-budget:
+    name: Orçamento de diff (anti scope-creep)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verificar orçamento
+        env:
+          DIFF_BUDGET_OVERRIDE: ${{ contains(github.event.pull_request.labels.*.name, 'diff-budget-override') && '1' || '0' }}
+        run: node scripts/check-diff-budget.mjs origin/${{ github.base_ref }}

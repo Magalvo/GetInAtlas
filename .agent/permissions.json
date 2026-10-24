@@ -1,0 +1,33 @@
+{
+  "$comment": "Manifesto de permissões do agente. Formato agnóstico de ferramenta: usa-o para configurar allow/deny lists no Claude Code, Codex, Cursor, etc. O enforcement técnico está no lefthook.yml e no CI.",
+  "read": ["**/*"],
+  "write": {
+    "allow": ["src/**", "tests/unit/**", "tests/properties/**", "specs/**", "docs/**"],
+    "deny": [
+      "tests/acceptance/**",
+      "tsconfig.json",
+      "eslint.config.js",
+      "lefthook.yml",
+      ".github/**",
+      ".agent/permissions.json"
+    ]
+  },
+  "execute": {
+    "allow": [
+      "make *",
+      "npx vitest*",
+      "npx tsc*",
+      "npx eslint*",
+      "npx prettier*",
+      "git status",
+      "git diff*",
+      "git log*",
+      "git add *",
+      "git commit*",
+      "git checkout -b wi/*"
+    ],
+    "deny": ["git push --force*", "git reset --hard*", "rm -rf*", "curl*", "wget*"]
+  },
+  "network": "deny",
+  "secrets": "deny"
+}

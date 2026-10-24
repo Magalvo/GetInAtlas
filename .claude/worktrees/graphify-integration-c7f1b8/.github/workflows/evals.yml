@@ -1,0 +1,27 @@
+# Evals correm separados do CI principal: custam dinheiro (APIs) e tempo.
+# Disparam: à noite, manualmente, e em PRs que tocam evals/ ou prompts.
+# O contrato (datasets + thresholds) está protegido no workflow ci.yml.
+name: Evals
+on:
+  schedule:
+    - cron: '0 3 * * *' # nightly 03:00 UTC
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'evals/**'
+      - 'scripts/run-evals.mjs'
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Para subjects com LLM real, expõe a chave via secret:
+      # env:
+      #   ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      - run: node scripts/run-evals.mjs

@@ -15,9 +15,11 @@ import { fileURLToPath } from 'node:url';
 import { parse as parseYaml } from 'yaml';
 import { z } from 'zod';
 
-const ROOT = fileURLToPath(new URL('..', import.meta.url));
+// SPECS_ROOT permite correr o validador contra um corpus de teste.
+const ROOT = process.env.SPECS_ROOT ?? fileURLToPath(new URL('..', import.meta.url));
 const TRACKS_DIR = join(ROOT, 'specs/tracks');
 const ITEMS_DIR = join(ROOT, 'specs/items');
+const WORK_SPECS_DIR = join(ROOT, 'specs/work-specs');
 
 const TrackSchema = z.object({
   id: z.string().regex(/^WT-\d{4}$/, 'id deve ter o formato WT-NNNN'),
@@ -35,32 +37,41 @@ const ItemSchema = z.object({
   acceptance: z.array(z.record(z.string())).optional(),
 });
 
+// Camada 4 (ADR-0006): o plano de implementação de um work-item.
+const WorkSpecSchema = z.object({
+  id: z.string().regex(/^WS-\d{4}$/, 'id deve ter o formato WS-NNNN'),
+  title: z.string().min(3),
+  item: z.string().regex(/^WI-\d{4}$/, 'item deve ter o formato WI-NNNN'),
+  status: z.enum(['draft', 'approved']),
+  owner: z.string().min(1),
+});
+
 const errors = [];
 const fail = (file, msg) => errors.push(`  ✗ ${file}: ${msg}`);
 
 function extractFrontmatter(content) {
   const match = /^---\r?\n([\s\S]*?)\r?\n---/.exec(content);
-  return match ? parseYaml(match[1]) : null;
+  return match ? { fm: parseYaml(match[1]), body: content.slice(match[0].length) } : null;
 }
 
-async function loadSpecs(dir, schema, label) {
+async function loadSpecs(dir, schema, label, { optional = false } = {}) {
   let files;
   try {
     files = (await readdir(dir)).filter((f) => f.endsWith('.md') && !f.startsWith('_'));
   } catch {
-    fail(dir, `pasta em falta`);
+    if (!optional) fail(dir, `pasta em falta`);
     return [];
   }
   const specs = [];
   for (const file of files) {
     const path = join(dir, file);
     const raw = await readFile(path, 'utf8');
-    const fm = extractFrontmatter(raw);
-    if (!fm) {
+    const parsed = extractFrontmatter(raw);
+    if (!parsed) {
       fail(file, 'sem frontmatter YAML');
       continue;
     }
-    const result = schema.safeParse(fm);
+    const result = schema.safeParse(parsed.fm);
     if (!result.success) {
       for (const issue of result.error.issues) {
         fail(file, `${label}.${issue.path.join('.')}: ${issue.message}`);
@@ -70,7 +81,7 @@ async function loadSpecs(dir, schema, label) {
     if (!basename(file).startsWith(result.data.id)) {
       fail(file, `o nome do ficheiro deve começar pelo id "${result.data.id}"`);
     }
-    specs.push({ file, ...result.data });
+    specs.push({ file, body: parsed.body, ...result.data });
   }
   return specs;
 }
@@ -88,8 +99,9 @@ function checkUniqueIds(specs) {
 
 const tracks = await loadSpecs(TRACKS_DIR, TrackSchema, 'track');
 const items = await loadSpecs(ITEMS_DIR, ItemSchema, 'item');
+const workSpecs = await loadSpecs(WORK_SPECS_DIR, WorkSpecSchema, 'work-spec', { optional: true });
 
-checkUniqueIds([...tracks, ...items]);
+checkUniqueIds([...tracks, ...items, ...workSpecs]);
 
 // Refs quebradas: todo o item aponta para um track existente
 const trackIds = new Set(tracks.map((t) => t.id));
@@ -115,6 +127,38 @@ for (const item of items) {
   }
 }
 
+// Work-specs (ADR-0006): apontam para um item existente, com o mesmo número
+const itemIds = new Set(items.map((i) => i.id));
+for (const spec of workSpecs) {
+  if (!itemIds.has(spec.item)) {
+    fail(spec.file, `referência quebrada: item "${spec.item}" não existe`);
+  }
+  if (spec.id.slice(3) !== spec.item.slice(3)) {
+    fail(spec.file, `${spec.id} deve ter o mesmo número que o item ${spec.item}`);
+  }
+}
+
+// Nada de código sem plano aprovado: ready/in-progress exigem work-spec approved
+const approvedItems = new Set(workSpecs.filter((s) => s.status === 'approved').map((s) => s.item));
+for (const item of items) {
+  if (['ready', 'in-progress'].includes(item.status) && !approvedItems.has(item.id)) {
+    fail(item.file, `status "${item.status}" exige uma work-spec com status approved`);
+  }
+}
+
+// Tracks ativos declaram como se mede o sucesso
+const METRIC_SECTION =
+  /^## (?:Success metric|Métrica de sucesso)[ \t]*\r?\n([\s\S]*?)(?=^## |(?![\s\S]))/m;
+for (const track of tracks) {
+  const section = METRIC_SECTION.exec(track.body)?.[1] ?? '';
+  if (track.status === 'active' && section.trim() === '') {
+    fail(
+      track.file,
+      `track ativo exige uma secção "## Success metric" (métrica de sucesso) preenchida`
+    );
+  }
+}
+
 if (errors.length > 0) {
   console.error(`\nValidação de specs FALHOU (${errors.length} erro(s)):\n`);
   console.error(errors.join('\n'));
@@ -122,4 +166,6 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-console.log(`✓ Specs válidas: ${tracks.length} track(s), ${items.length} work-item(s).`);
+console.log(
+  `✓ Specs válidas: ${tracks.length} track(s), ${items.length} work-item(s), ${workSpecs.length} work-spec(s).`
+);

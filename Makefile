@@ -6,7 +6,7 @@
 
 .PHONY: help setup check format typecheck lint test test-unit test-acceptance \
         test-properties validate-specs diff-budget eval formal-setup \
-        formal-check formal-demo-race new-item new-track new-adr
+        formal-check formal-demo-race new-item new-track new-spec new-adr
 
 help: ## Lista os comandos disponíveis
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}'
@@ -75,11 +75,21 @@ new-track: ## Novo work-track: make new-track ID=WT-0002 SLUG=nome-curto
 	@test -n "$(ID)" -a -n "$(SLUG)" || (echo "uso: make new-track ID=WT-0002 SLUG=nome" && exit 1)
 	@sed "s/{{ID}}/$(ID)/g" .agent/templates/track.md > specs/tracks/$(ID)-$(SLUG).md
 	@echo "✓ specs/tracks/$(ID)-$(SLUG).md"
+	@echo ""
+	@echo "Checklist de arranque do feature (ADR-0006):"
+	@echo "  1. Preenche objetivo, âmbito dentro/fora e métrica de sucesso"
+	@echo "  2. Verificação de promoção: lê docs/canonical/ primeiro; o que é verdade além deste track vai para lá"
+	@echo "  3. Lista os work-items de forma grosseira; parte só os próximos 1-2"
+	@echo "  4. make new-spec ITEM=WI-NNNN e aprovação humana antes de qualquer código"
 
 new-item: ## Novo work-item: make new-item ID=WI-0002 SLUG=nome-curto TRACK=WT-0001
 	@test -n "$(ID)" -a -n "$(SLUG)" -a -n "$(TRACK)" || (echo "uso: make new-item ID=WI-0002 SLUG=nome TRACK=WT-0001" && exit 1)
 	@sed -e "s/{{ID}}/$(ID)/g" -e "s/{{TRACK}}/$(TRACK)/g" .agent/templates/work-item.md > specs/items/$(ID)-$(SLUG).md
 	@echo "✓ specs/items/$(ID)-$(SLUG).md"
+
+new-spec: ## Nova work-spec de um item: make new-spec ITEM=WI-0002
+	@test -n "$(ITEM)" || (echo "uso: make new-spec ITEM=WI-0002" && exit 1)
+	@node scripts/new-spec.mjs $(ITEM)
 
 new-adr: ## Novo ADR: make new-adr NUM=0002 SLUG=nome-curto
 	@test -n "$(NUM)" -a -n "$(SLUG)" || (echo "uso: make new-adr NUM=0002 SLUG=nome" && exit 1)

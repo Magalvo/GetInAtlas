@@ -11,6 +11,10 @@ owner: <nome-humano>
 
 <O resultado de negócio/produto que este track persegue.>
 
+## Métrica de sucesso
+
+<Como se mede que este track resultou. Obrigatória quando o track passa a active.>
+
 ## Âmbito
 
 <O que está dentro e — igualmente importante — o que está FORA.>

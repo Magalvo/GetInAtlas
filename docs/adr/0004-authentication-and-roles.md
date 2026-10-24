@@ -34,8 +34,13 @@ Alternatives considered:
 ## Decisão
 
 Use a self-hosted TypeScript auth library (Better Auth) that stores users and
-sessions in our own Postgres. Sign-in methods are an email magic link plus
-Google and Apple sign-in.
+sessions in our own Postgres. Sign-in methods are an email magic link and
+Google sign-in.
+
+Apple sign-in is **postponed** until after the MVP. It needs a paid Apple
+Developer account (about $99 a year), and iPhone users still have the magic
+link and Google. A native iOS app would bring it back: Apple requires "Sign
+in with Apple" whenever an app offers another social login.
 
 Sessions are httpOnly, Secure, SameSite cookies, served from the same
 registrable domain as the PWA.
@@ -70,6 +75,24 @@ code, only for each send. The free alternatives were rejected for the MVP:
 - **Dropping phone verification** would let a blocked traveller escape their
   strikes with a new email.
 
+**Defences against SMS pumping** (settled 2026-10-24):
+
+- **Country allow-list:** SMS is sent only to the countries most Lisbon
+  tourists come from: EU/EEA, the UK, Switzerland, the US, Canada, Brazil,
+  and others added on evidence. Any other country gets a clear message, not
+  a send. The list is configuration, not code.
+- **Rate limits:**
+
+  | Scope            | Limit                         |
+  | ---------------- | ----------------------------- |
+  | Per phone number | 3 sends per 15 min, 5 per day |
+  | Per IP           | 10 sends per hour             |
+  | Per account      | 5 sends per day               |
+  | Between resends  | 30 s, then 60 s, then 120 s   |
+
+  These are named constants. The spike may tune them against what Bird
+  provides.
+
 **Admins must use two-factor authentication** (TOTP).
 
 ## Consequências
@@ -86,12 +109,14 @@ Worse:
 
 - We own security patches for the auth library and its configuration.
 - Each SMS costs a few cents, and SMS gateways attract SMS-pumping fraud.
-- Apple sign-in requires a paid Apple Developer account.
+- A legitimate traveller from a country outside the allow-list can't book
+  until the list grows.
+- Several travellers behind one hotel or café IP can hit the per-IP limit.
+- iPhone users without a Google account have one more step (the magic link).
 
 Now mandatory:
 
-- Rate limits on sending OTPs, per phone number, per IP and per account.
-- A country allow-list or deny-list for SMS.
+- The OTP rate limits and the country allow-list above.
 - Phone numbers are personal data: exclude them from logs, and delete them
   when the account is deleted.
 - Every API route declares the role it requires. The default is to deny.

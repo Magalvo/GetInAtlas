@@ -1,6 +1,6 @@
 # ADR-0003 — Platform and stack for GetInAtlas
 
-- **Estado:** proposto
+- **Estado:** aceite
 - **Data:** 2026-10-24
 - **Decisor(es):** Diogo
 

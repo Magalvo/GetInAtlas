@@ -1,6 +1,6 @@
 # ADR-0005 — Booking concurrency: invariants enforced in the database
 
-- **Estado:** proposto
+- **Estado:** aceite
 - **Data:** 2026-10-24
 - **Decisor(es):** Diogo
 

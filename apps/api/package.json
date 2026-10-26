@@ -1,0 +1,17 @@
+{
+  "name": "@getinatlas/api",
+  "version": "0.0.0",
+  "description": "API do GetInAtlas (ADR-0003)",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "migrate": "node dist/migrate.js"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.23.1"
+  },
+  "dependencies": {
+    "pg": "^8.23.1"
+  }
+}

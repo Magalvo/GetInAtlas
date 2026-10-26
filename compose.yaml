@@ -1,6 +1,10 @@
 # Postgres local para o gate (WI-0016). Sem volume: os dados de teste são descartáveis.
 # Porta 54329 para não chocar com um Postgres que já corra em 5432.
 # Autenticação trust e só em 127.0.0.1: sem password no código (é uma base de testes).
+# Nome fixo: todas as worktrees partilham este contentor (a porta é uma só);
+# cada teste isola-se na sua própria base de dados.
+name: getinatlas
+
 services:
   db:
     image: postgres:16-alpine

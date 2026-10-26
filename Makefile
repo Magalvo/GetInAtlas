@@ -4,7 +4,7 @@
 # `make check` é o comando que o agente corre obsessivamente até ficar verde.
 # =============================================================================
 
-.PHONY: help setup check format typecheck lint test test-unit test-acceptance \
+.PHONY: help setup check format typecheck lint test test-unit test-acceptance db-up db-migrate \
         test-properties validate-specs diff-budget eval formal-setup \
         formal-check formal-demo-race new-item new-track new-spec new-adr
 
@@ -14,7 +14,7 @@ help: ## Lista os comandos disponíveis
 setup: ## Instala dependências e hooks
 	npm install
 
-check: validate-specs format typecheck lint test ## TUDO. O loop do agente: correr até verde.
+check: validate-specs format typecheck lint db-up test ## TUDO. O loop do agente: correr até verde.
 	@echo ""
 	@echo "✓✓✓ Tudo verde. ✓✓✓"
 
@@ -41,6 +41,23 @@ test-properties: ## Só property-based tests
 
 validate-specs: ## Valida o corpus de specs (schema, refs, órfãos, IDs)
 	node scripts/validate-specs.mjs
+
+# ---- Postgres no gate (WI-0016) --------------------------------------------
+# Os testes da API correm contra um Postgres real (ADR-0005). Com DATABASE_URL_TEST
+# definido (CI, ou um Postgres teu), o Docker não é necessário.
+
+db-up: ## Arranca o Postgres local (Docker) se DATABASE_URL_TEST não estiver definido
+ifndef DATABASE_URL_TEST
+	@command -v docker >/dev/null 2>&1 || { \
+		echo "✗ Docker não encontrado. Os testes da API precisam de Postgres (WI-0016)."; \
+		echo "  Instala o Docker Desktop, ou aponta DATABASE_URL_TEST para um Postgres 16+ existente."; \
+		exit 1; }
+	docker compose up -d --wait db
+endif
+
+db-migrate: ## Aplica as migrations a DATABASE_URL (build da API + runner)
+	npm run build -w @getinatlas/api
+	npm run migrate -w @getinatlas/api
 
 diff-budget: ## Verifica o orçamento de diff vs origin/main
 	node scripts/check-diff-budget.mjs

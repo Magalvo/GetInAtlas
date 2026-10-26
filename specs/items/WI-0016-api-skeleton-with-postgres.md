@@ -1,7 +1,7 @@
 ---
 id: 'WI-0016'
 title: Postgres in the gate
-status: ready
+status: done
 track: 'WT-0003'
 owner: Diogo
 acceptance:

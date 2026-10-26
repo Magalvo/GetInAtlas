@@ -20,6 +20,22 @@ jobs:
   check:
     name: Lint · Types · Testes · Specs
     runs-on: ubuntu-latest
+    # Os testes da API correm contra um Postgres real (WI-0016, ADR-0005).
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 15
+    env:
+      DATABASE_URL_TEST: postgres://postgres@localhost:5432/postgres
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

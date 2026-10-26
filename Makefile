@@ -22,13 +22,13 @@ format: ## Formata o código (prettier)
 	npx prettier --write . --log-level warn
 
 typecheck: ## Verificação de tipos (tsc --strict)
-	npx tsc --noEmit
+	npm run typecheck
 
 lint: ## Linter (eslint, regras estritas)
-	npx eslint src tests scripts
+	npm run lint
 
-test: ## Todos os testes (unit + acceptance + properties)
-	npx vitest run
+test: ## Todos os testes (unit + acceptance + properties + workspaces)
+	npm run test
 
 test-unit: ## Só testes unitários (loop rápido de TDD)
 	npx vitest run tests/unit

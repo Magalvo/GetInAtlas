@@ -26,6 +26,33 @@ export default tseslint.config(
     },
   },
   {
+    // O domínio é puro (ADR-0003): sem I/O e nunca depende das apps.
+    files: ['packages/domain/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['node:*', 'fs', 'fs/*', 'net', 'http', 'https', 'child_process'],
+              message: 'packages/domain não faz I/O (ADR-0003): recebe os dados por parâmetro.',
+            },
+            {
+              group: [
+                '**/apps/**',
+                '@getinatlas/api',
+                '@getinatlas/api/*',
+                '@getinatlas/web',
+                '@getinatlas/web/*',
+              ],
+              message: 'packages/domain nunca importa de apps/* (ADR-0003).',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     // Scripts de tooling (Node puro, sem type-checking de projeto)
     files: ['scripts/**/*.mjs'],
     extends: [tseslint.configs.disableTypeChecked],

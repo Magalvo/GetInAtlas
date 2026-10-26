@@ -4,6 +4,10 @@
   "description": "Boilerplate para desenvolvimento AI-driven com SDD/TDD e defesa em profundidade",
   "type": "module",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "bin": {
     "ai-sdd": "./dist/adopter/cli.js"
   },
@@ -13,7 +17,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src tests scripts",
+    "lint": "eslint src tests scripts packages apps --no-error-on-unmatched-pattern",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",

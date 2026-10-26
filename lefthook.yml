@@ -20,13 +20,13 @@ pre-commit:
       run: node scripts/validate-specs.mjs
     typecheck:
       priority: 4
-      run: npx tsc --noEmit
+      run: npm run typecheck
     lint:
       priority: 5
-      run: npx eslint src tests scripts
+      run: npm run lint
     test:
       priority: 6
-      run: npx vitest run
+      run: npm run test
 
 pre-push:
   commands:

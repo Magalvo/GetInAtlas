@@ -1,7 +1,7 @@
 ---
 id: 'WI-0015'
 title: Monorepo workspace skeleton
-status: ready
+status: done
 track: 'WT-0003'
 owner: Diogo
 acceptance:

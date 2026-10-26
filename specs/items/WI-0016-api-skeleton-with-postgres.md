@@ -42,9 +42,10 @@ and says how to start one.
 
 ## Missing before coding
 
-- WI-0015 is `done`.
-- ADR-0003 and ADR-0005 are accepted.
-- A human approves the change to `.github/workflows/ci.yml` (a Postgres
-  service container). It is a gate the agent doesn't control.
-- A human confirms that `make check` may require Docker locally (ADR-0003
-  says so, as a consequence).
+Nothing. Settled on 2026-10-26:
+
+- WI-0015 is `done`, and ADR-0003 and ADR-0005 are accepted.
+- The owner approved the Postgres service container in
+  `.github/workflows/ci.yml`, and Docker as a local requirement of
+  `make check`.
+- The item becomes `ready` once WS-0016 is approved.

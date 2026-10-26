@@ -110,10 +110,11 @@ their turn comes.
 
 | #   | Item                                                                                      | Size       | Depends on       |
 | --- | ----------------------------------------------------------------------------------------- | ---------- | ---------------- |
-| 1   | WI-0015 — Monorepo workspace skeleton                                                     | split      | ADR-0003         |
-| 2   | WI-0016 — API skeleton with Postgres in the gate                                          | split      | WI-0015          |
+| 1   | WI-0015 — Monorepo workspace skeleton (done)                                              | split      | ADR-0003         |
+| 2   | WI-0016 — Postgres in the gate                                                            | split      | WI-0015          |
+| 2b  | WI-0018 — API health route and configuration                                              | split      | WI-0016, WI-0019 |
 | 3   | _(rough)_ PWA skeleton on the same domain as the API, plus the AGENTS.md structure update | not split  | WI-0015          |
-| 4   | _(rough)_ Authentication spike, then sign-in                                              | not split  | WI-0016          |
+| 4   | _(rough)_ Authentication spike, then sign-in                                              | not split  | WI-0018          |
 | 5   | WI-0006 — Operator and vehicle onboarding                                                 | coarse, 10 | 3, 4, WI-0014    |
 | 6   | WI-0007 — Tours and time slots                                                            | coarse, 12 | WI-0006          |
 | 7   | WI-0008 — Slot booking and cancellation                                                   | coarse, 15 | WI-0007          |
@@ -124,14 +125,18 @@ their turn comes.
 **Parallelism**, following the rule "items that don't touch the same files
 can run in parallel":
 
-- Items 1 and 2 run in sequence, because both touch the root configuration
-  and CI.
+- Items 1, 2 and 2b run in sequence: they touch the root configuration, CI
+  and the same `apps/api` workspace. WI-0016 was split on 2026-10-26
+  (WS-0016) because the whole item broke the diff budget.
+- **WI-0019 (WT-0005) must be done before WI-0018.** It leaves lockfiles
+  out of the diff budget, and Fastify alone adds about 687 lockfile lines.
+  WI-0019 touches only the budget scripts, so it can run alongside WI-0016.
 - **WI-0014 (WT-0005) must be done before WI-0006.** WI-0006 is the first
   item with product behaviour, so its acceptance tests are ratified through
   ADR-0007, which WI-0014 implements. WI-0014 can run alongside items 1 and 2
   only if the work-specs show they don't share files. Both touch `ci.yml`, so
   by default they run in sequence.
-- After item 2, items 3 and 4 can run in parallel.
+- After item 2b, items 3 and 4 can run in parallel.
 - After item 7, items 8 and 9 can run in parallel. The dispute path of
   WI-0009 AC1 is only exercised once WI-0010 lands.
 - Each work-spec lists its files, and that list confirms or refutes the

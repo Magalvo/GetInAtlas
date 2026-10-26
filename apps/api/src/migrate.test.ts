@@ -114,8 +114,8 @@ describe('migrations (WI-0016)', () => {
 
 describe('Postgres no gate (WI-0016)', () => {
   it('AC3: sem Postgres, falha com uma mensagem acionável em vez de saltar', async () => {
-    await expect(
-      createTestDatabase('postgres://postgres:postgres@127.0.0.1:1/postgres')
-    ).rejects.toThrow(/Postgres indisponível em 127\.0\.0\.1:1\. Corre `make db-up`/);
+    await expect(createTestDatabase('postgres://postgres@127.0.0.1:1/postgres')).rejects.toThrow(
+      /Postgres indisponível em 127\.0\.0\.1:1\. Corre `make db-up`/
+    );
   });
 });

@@ -9,7 +9,7 @@ import { randomUUID } from 'node:crypto';
 import pg from 'pg';
 import { z } from 'zod';
 
-export const DEFAULT_TEST_SERVER_URL = 'postgres://postgres:postgres@127.0.0.1:54329/postgres';
+export const DEFAULT_TEST_SERVER_URL = 'postgres://postgres@127.0.0.1:54329/postgres';
 const CONNECT_TIMEOUT_MS = 3000;
 
 export interface TestDatabase {

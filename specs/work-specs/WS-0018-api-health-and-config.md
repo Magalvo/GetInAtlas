@@ -90,6 +90,23 @@ point** (process). Fastify 5 is the only new runtime dependency (ADR-0003;
    database). `RENDER_GIT_COMMIT` stays out: only Render sets it. `.env` is already
    in `.gitignore`.
 
+## Deviations during implementation (2026-10-27, for review in the PR)
+
+Small changes that don't touch the ACs or the approved answers:
+
+- **`buildApp({ config, version })` creates the pool itself** through
+  `createPool(databaseUrl, app.log)`, and closes it in Fastify's `onClose`
+  hook. The plan passed the pool in, but `createPool` needs the app's
+  logger, which only exists once the app does. The pool listener is still
+  in `createPool`, and both the server and the tests go through it.
+  Without the listener, the AC2 test run fails (checked by removing it).
+- **`apps/api/src/server.test.ts`** is a separate file for the entry point
+  test that the test plan put under AC3, plus `readVersion`.
+- **`.gitignore`** gains `!.env.example`, because `.env.*` was ignoring the
+  example file.
+- **The health route's log level** is `warn` only when `LOG_LEVEL` is
+  `info` or `debug`, so a stricter `LOG_LEVEL` still applies to it.
+
 ## Files to change
 
 | #   | File                          | Change                                                |

@@ -14,20 +14,17 @@ import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import pg from 'pg';
 import { z } from 'zod';
+import { DatabaseUrlSchema } from './config.js';
 
 const DEFAULT_MIGRATIONS_DIR = fileURLToPath(new URL('../migrations/', import.meta.url));
 // Chave fixa do advisory lock das migrations deste projeto.
 const MIGRATION_LOCK_KEY = 4_747_016;
 
-const DatabaseUrlSchema = z.object({
-  DATABASE_URL: z
-    .string({ required_error: 'DATABASE_URL em falta' })
-    .url('DATABASE_URL não é um URL válido')
-    .refine((url) => /^postgres(ql)?:\/\//.test(url), 'DATABASE_URL tem de ser postgres://'),
-});
+// A regra do DATABASE_URL vive em config.ts (WI-0018): uma regra, um sítio.
+const MigrateEnvSchema = z.object({ DATABASE_URL: DatabaseUrlSchema });
 
 export function parseDatabaseUrl(env: Record<string, string | undefined>): string {
-  const result = DatabaseUrlSchema.safeParse(env);
+  const result = MigrateEnvSchema.safeParse(env);
   if (!result.success) {
     throw new Error(result.error.issues.map((issue) => issue.message).join('; '));
   }

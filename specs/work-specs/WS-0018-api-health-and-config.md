@@ -2,7 +2,7 @@
 id: 'WS-0018'
 title: 'API health route and configuration'
 item: 'WI-0018'
-status: draft
+status: approved
 owner: 'Diogo'
 ---
 
@@ -24,12 +24,13 @@ point** (process). Fastify 5 is the only new runtime dependency (ADR-0003;
      so tests pass a plain object.
    - Variables:
 
-     | Variable       | Rule                                        | Default     |
-     | -------------- | ------------------------------------------- | ----------- |
-     | `DATABASE_URL` | required, `postgres://` or `postgresql://`  | —           |
-     | `PORT`         | integer 1–65535 (Render sets it)            | `3000`      |
-     | `HOST`         | non-empty string                            | `127.0.0.1` |
-     | `LOG_LEVEL`    | `fatal`, `error`, `warn`, `info` or `debug` | `info`      |
+     | Variable            | Rule                                        | Default     |
+     | ------------------- | ------------------------------------------- | ----------- |
+     | `DATABASE_URL`      | required, `postgres://` or `postgresql://`  | —           |
+     | `PORT`              | integer 1–65535 (Render sets it)            | `3000`      |
+     | `HOST`              | non-empty string                            | `127.0.0.1` |
+     | `LOG_LEVEL`         | `fatal`, `error`, `warn`, `info` or `debug` | `info`      |
+     | `RENDER_GIT_COMMIT` | optional, set by Render on deploy           | —           |
 
    - On failure it throws a `ConfigError` that lists **every** invalid
      variable by name, not only the first, for example
@@ -39,14 +40,15 @@ point** (process). Fastify 5 is the only new runtime dependency (ADR-0003;
      so the two never drift (one rule, one place).
 
 2. **App (`src/app.ts`, AC1, AC2).**
-   - `buildApp({ config, pool, version })` returns a Fastify instance that
+   - `buildApp({ config, pool, version })`, where `version` is
+     `{ version, commit? }` (question 2), returns a Fastify instance that
      isn't listening. Tests use `app.inject()`.
    - `GET /health` runs `SELECT 1` on the pool:
 
-     | Database  | Status | Body                                                        |
-     | --------- | ------ | ----------------------------------------------------------- |
-     | reachable | 200    | `{ "status": "ok", "version": "…", "database": "up" }`      |
-     | otherwise | 503    | `{ "status": "error", "version": "…", "database": "down" }` |
+     | Database  | Status | Body                                                                       |
+     | --------- | ------ | -------------------------------------------------------------------------- |
+     | reachable | 200    | `{ "status": "ok", "version": "…", "commit": "…", "database": "up" }`      |
+     | otherwise | 503    | `{ "status": "error", "version": "…", "commit": "…", "database": "down" }` |
 
    - The body never carries the database error. The error goes to the log
      at `warn`.
@@ -73,7 +75,9 @@ point** (process). Fastify 5 is the only new runtime dependency (ADR-0003;
    - `SIGTERM` and `SIGINT` close the server, then the pool. Render sends
      `SIGTERM` on every deploy.
    - The version comes from `apps/api/package.json`, read once at startup
-     and parsed with Zod (question 2).
+     and parsed with Zod. `commit` comes from `RENDER_GIT_COMMIT`, and the
+     body leaves it out when the variable is absent, as in a local run
+     (question 2).
 
 5. **Scripts.** `apps/api` gains `start` (`node dist/server.js`). A local
    run is `make db-up`, `npm run build -w @getinatlas/api`, then `start`
@@ -82,7 +86,8 @@ point** (process). Fastify 5 is the only new runtime dependency (ADR-0003;
    dev loop anyway.
 
 6. **Example environment.** `apps/api/.env.example` lists the four
-   variables with local values (the compose database). `.env` is already
+   required-or-defaulted variables with local values (the compose
+   database). `RENDER_GIT_COMMIT` stays out: only Render sets it. `.env` is already
    in `.gitignore`.
 
 ## Files to change
@@ -96,7 +101,7 @@ point** (process). Fastify 5 is the only new runtime dependency (ADR-0003;
 | 5   | `apps/api/src/app.test.ts`    | new: AC1, AC2                                         |
 | 6   | `apps/api/src/server.ts`      | new: entry point, shutdown                            |
 | 7   | `apps/api/src/migrate.ts`     | reuses the `DATABASE_URL` rule from `config.ts`       |
-| 8   | `apps/api/.env.example`       | new: the four variables                               |
+| 8   | `apps/api/.env.example`       | new: the variables, with local values                 |
 | 9   | `package-lock.json`           | Fastify (~687 lines, **outside the budget**, WI-0019) |
 | 10  | `specs/items/WI-0018-…`       | status                                                |
 
@@ -107,7 +112,7 @@ will list `fastify@^5.12.7` as a new direct dependency.
 
 | AC  | Cases                                                                                                                                                                                                                                                                                                                                                                                                                             | Level     |
 | --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
-| AC1 | `app.test.ts`, with a fresh test database (WI-0016): `GET /health` → 200, `database: "up"`, and `version` equal to the one passed to `buildApp`.                                                                                                                                                                                                                                                                                  | unit + DB |
+| AC1 | `app.test.ts`, with a fresh test database (WI-0016): `GET /health` → 200, `database: "up"`, `version` equal to the one passed to `buildApp`, and `commit` present only when given.                                                                                                                                                                                                                                                | unit + DB |
 | AC2 | A pool aimed at a closed port → 503, `database: "down"`, no error text in the body. **Recovery and survival:** health is `up`, then the test drops the database with `WITH (FORCE)`, which kills the pool's idle connection (the `error` event), and health returns 503 while the app keeps answering. A hanging database is not simulated; the 2-second limit is set in the pool options and reviewed.                           | unit + DB |
 | AC3 | `config.test.ts`: a valid environment gives the typed config with defaults. Each variable missing or invalid (`DATABASE_URL` absent or `mysql://`, `PORT` `abc`, `0` or `70000`, `LOG_LEVEL` `verbose`) gives a `ConfigError` naming it. Two invalid variables are both named. The message never contains the `DATABASE_URL` value. Plus one test that the entry point's startup rejects a bad environment before opening a port. | unit      |
 | —   | Existing `migrate.test.ts` still passes after the `DATABASE_URL` rule moves.                                                                                                                                                                                                                                                                                                                                                      | unit + DB |
@@ -136,33 +141,23 @@ process still up), then `docker compose start db` and `curl` (200).
 
 ## Assumptions and questions
 
-The owner must answer these before approving. Each has a recommendation.
+**Approved by the owner on 2026-10-27**, with the three recommendations:
 
-1. **`HOST` default.**
-   - **(a) `127.0.0.1`, and Render sets `HOST=0.0.0.0`** (recommended).
-     Pros: a local run never exposes the API to the network (a café's
-     Wi-Fi). Cons: one more variable to set on Render, and forgetting it
-     fails the first deploy (visibly).
-   - (b) `0.0.0.0`. Pros: works on Render with no setting. Cons: every local
-     run listens on every interface.
-2. **Where the version comes from.**
-   - **(a) `version` from `apps/api/package.json`, plus an optional
-     `commit` from `RENDER_GIT_COMMIT` when it exists** (recommended). Pros:
-     the commit says exactly what is deployed, while the package version
-     stays `0.0.0` for a long time. Cons: two fields instead of one.
-   - (b) the package version only. Pros: simplest. Cons: `0.0.0` on every
-     deploy tells you nothing.
-   - (c) an `APP_VERSION` variable set at deploy. Pros: free form. Cons: one
-     more required variable, and nothing local sets it.
-3. **Zod at the routes (ADR-0003: "Zod schemas at every route").**
-   - **(a) No type provider yet.** `GET /health` has no input, and its
-     response is typed in TypeScript. `fastify-type-provider-zod` arrives
-     with the first route that has input (the auth spike) (recommended).
-     Pros: no dependency without a use, and the choice gets made with a
-     real route. Cons: the first route with input pays for the setup.
-   - (b) Add it now. Pros: the pattern exists from day one. Cons: one more
-     dependency, wired for a route that validates nothing.
+1. **`HOST` default: `127.0.0.1`.** Render's configuration sets
+   `HOST=0.0.0.0`, and the deploy item records it. Option (b), `0.0.0.0` by
+   default, was rejected: every local run would listen on every interface.
+2. **Version: `version` from `apps/api/package.json`, plus an optional
+   `commit` from `RENDER_GIT_COMMIT`.** The commit says exactly what is
+   deployed. Rejected: (b) the package version only, which stays `0.0.0`
+   for a long time; (c) an `APP_VERSION` variable, required and set by
+   nothing local.
+3. **Zod at the routes: no type provider yet.** `GET /health` has no input,
+   and its response is typed in TypeScript. `fastify-type-provider-zod`
+   arrives with the first route that has input (the auth spike). Option
+   (b), adding it now, was rejected: a dependency wired for a route that
+   validates nothing. This reads ADR-0003's "Zod schemas at every route" as
+   every route **with input**.
 
-- **Assumption:** the four variables are enough for now. Authentication
+- **Assumption:** these variables are enough for now. Authentication
   (secrets, SMS keys) adds its own in its own item, with the same schema.
 - **Assumption:** no `dev` script with reload in this item (step 5).

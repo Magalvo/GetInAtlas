@@ -1,7 +1,7 @@
 ---
 id: 'WI-0018'
 title: API health route and configuration
-status: draft
+status: ready
 track: 'WT-0003'
 owner: Diogo
 acceptance:
@@ -34,4 +34,5 @@ before the server starts. Split out of WI-0016 on 2026-10-26.
 
 ## Missing before coding
 
-- WS-0018 is `approved`. WI-0016 and WI-0019 are `done` (2026-10-27).
+Nothing. WI-0016 and WI-0019 are `done`, and the owner approved WS-0018 on
+2026-10-27.

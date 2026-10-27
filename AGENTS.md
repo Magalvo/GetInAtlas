@@ -77,7 +77,9 @@ copiam.
 7. **Nunca trabalhes diretamente em `main`.** Branch por work-item
    (`wi/WI-NNNN-slug`), commits pequenos e frequentes.
 8. **Âmbito é sagrado.** Só tocas nos ficheiros necessários ao work-item.
-   O orçamento de diff (15 ficheiros / 800 linhas) é verificado no CI.
+   O orçamento de diff (15 ficheiros / 800 linhas) é verificado no CI. O
+   `package-lock.json` não conta, por ser gerado; em troca, o job lista as
+   dependências diretas novas para revisão humana (WI-0019).
 
 ## Workflow obrigatório
 

@@ -51,6 +51,23 @@ change lives in `check-diff-budget.mjs` alone, and neither `ci.yml` nor
 6. **Docs.** AGENTS.md rule 8 and the README line on the budget say that
    `package-lock.json` doesn't count, and why.
 
+## Deviation during implementation (approved 2026-10-27)
+
+The plan said `ci.yml` wouldn't change. That was wrong: the `diff-budget`
+CI job only checks out the code and runs the script with `node`, without
+installing dependencies. Once the script reads `package.json` through Zod
+(AGENTS.md rule 4), the job failed with `Cannot find package 'zod'`.
+
+The owner approved option (a): the `diff-budget` job gains `setup-node` and
+`npm ci`, like the `check` job, at the cost of 20–30 seconds. Two options
+were rejected:
+
+- (b) dropping Zod from the script, which breaks hard rule 4;
+- (c) skipping the dependency list when Zod is missing, which would degrade
+  AC3 silently in CI, where the list matters.
+
+That makes **6 files**, not 5.
+
 ## Files to change
 
 | #   | File                             | Change                                                |

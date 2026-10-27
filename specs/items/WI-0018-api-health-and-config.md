@@ -34,6 +34,4 @@ before the server starts. Split out of WI-0016 on 2026-10-26.
 
 ## Missing before coding
 
-- WI-0016 is `done`.
-- WI-0019 is `done`. Fastify adds about 687 lockfile lines, more than the
-  diff budget allows without it.
+- WS-0018 is `approved`. WI-0016 and WI-0019 are `done` (2026-10-27).

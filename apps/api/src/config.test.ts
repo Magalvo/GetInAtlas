@@ -2,7 +2,13 @@ import { describe, expect, it } from 'vitest';
 import { ConfigError, loadConfig } from './config.js';
 
 // WI-0018 AC3: a configuração vem do ambiente, validada com Zod no arranque.
-const SECRET_URL = 'postgres://app:s3cr3t@db.example.invalid:5432/getinatlas';
+// Montado em tempo de execução: um URL com credenciais escrito à letra dispara
+// os scanners de segredos (GitGuardian), mesmo sendo fictício.
+const FAKE_PASSWORD = 'fake-password-for-tests';
+const SECRET_URL = Object.assign(new URL('postgres://db.example.invalid:5432/getinatlas'), {
+  username: 'app',
+  password: FAKE_PASSWORD,
+}).toString();
 
 function errorOf(env: Record<string, string | undefined>): ConfigError {
   try {
@@ -71,7 +77,7 @@ describe('configuração da API (WI-0018)', () => {
   it('AC3: a mensagem nunca mostra o valor do DATABASE_URL', () => {
     const error = errorOf({ DATABASE_URL: SECRET_URL, PORT: 'abc' });
 
-    expect(error.message).not.toContain('s3cr3t');
+    expect(error.message).not.toContain(FAKE_PASSWORD);
     expect(error.message).not.toContain(SECRET_URL);
   });
 });

@@ -2,7 +2,7 @@
 id: 'WS-0019'
 title: 'Leave lockfiles out of the diff budget'
 item: 'WI-0019'
-status: draft
+status: approved
 owner: 'Diogo'
 ---
 
@@ -93,14 +93,14 @@ These are unit tests: the item is tooling (ADR-0007).
 
 ## Assumptions and questions
 
-- **Approval needed:** AC1 changes how a CI gate counts. You approved the
-  idea on 2026-10-26 (WS-0016, option a). Approving this work-spec approves
-  the implementation, including the new wording of AGENTS.md rule 8, which
-  is the constitution.
+**Approved by the owner on 2026-10-27**, including:
+
+- the change to how the CI gate counts (AC1), with the new wording of
+  AGENTS.md rule 8, which is the constitution;
+- the AC3 dependency list going **in the CI job output**. A PR comment was
+  rejected for now, because it needs `pull-requests: write` permissions in
+  CI.
+
 - **Assumption:** only `package-lock.json` is excluded. Other generated
   files (for example a future `pnpm-lock.yaml` or generated code) each need
   their own decision.
-- **Question:** should the AC3 dependency list also go to a PR comment, or
-  is the CI job output enough? I recommend the job output for now. A PR
-  comment needs `pull-requests: write` permissions in CI, which is a bigger
-  change to the gate.

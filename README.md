@@ -51,7 +51,9 @@ TLA+ (`make formal-check`), só depois no código.
   humano, ou por outro modelo/sessão sem acesso à implementação — testes do
   mesmo modelo partilham os mesmos pontos cegos.
 - **Orçamento de diff** (15 ficheiros / 800 linhas por defeito): scope creep
-  de agente falha o CI em vez de passar despercebido.
+  de agente falha o CI em vez de passar despercebido. O `package-lock.json`
+  fica de fora (é gerado), mas o relatório mostra as suas linhas e lista as
+  dependências diretas novas.
 - **Specs têm lint** (`make validate-specs`): schema, IDs únicos, refs
   quebradas, tracks órfãos. SDD sem validação não escala.
 - **Makefile como interface única**: o agente nunca adivinha comandos.

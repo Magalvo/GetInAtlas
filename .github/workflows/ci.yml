@@ -78,6 +78,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      # O script lê os package.json com Zod (WI-0019, AGENTS.md regra 4).
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
       - name: Verificar orçamento
         env:
           DIFF_BUDGET_OVERRIDE: ${{ contains(github.event.pull_request.labels.*.name, 'diff-budget-override') && '1' || '0' }}

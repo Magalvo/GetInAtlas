@@ -1,7 +1,7 @@
 ---
 id: 'WI-0019'
 title: Leave lockfiles out of the diff budget
-status: ready
+status: done
 track: 'WT-0005'
 owner: Diogo
 acceptance:

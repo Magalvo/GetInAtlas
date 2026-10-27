@@ -1,7 +1,7 @@
 ---
 id: 'WI-0019'
 title: Leave lockfiles out of the diff budget
-status: draft
+status: ready
 track: 'WT-0005'
 owner: Diogo
 acceptance:
@@ -39,5 +39,5 @@ instead, where a human can review them. Chosen by the owner on 2026-10-26
 
 ## Missing before coding
 
-Nothing. The owner approved this change to a CI gate on 2026-10-26. It needs
-its own work-spec before code.
+Nothing. The owner approved this change to a CI gate on 2026-10-26, and
+WS-0019 on 2026-10-27.

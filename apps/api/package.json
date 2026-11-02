@@ -6,12 +6,14 @@
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/server.js",
     "migrate": "node dist/migrate.js"
   },
   "devDependencies": {
     "@types/pg": "^8.23.1"
   },
   "dependencies": {
+    "fastify": "^5.12.7",
     "pg": "^8.23.1"
   }
 }

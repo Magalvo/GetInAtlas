@@ -1,7 +1,7 @@
 ---
 id: 'WI-0018'
 title: API health route and configuration
-status: ready
+status: done
 track: 'WT-0003'
 owner: Diogo
 acceptance:

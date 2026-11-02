@@ -4,5 +4,6 @@ coverage/
 *.log
 .env
 .env.*
+!.env.example
 formal/tla2tools.jar
 formal/states/

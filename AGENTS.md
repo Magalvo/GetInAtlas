@@ -31,6 +31,26 @@ Não adivinhes comandos. Usa o Makefile:
 - `make eval` — evals dos componentes probabilísticos (corre quando mudares prompts/subjects)
 - `make help` — lista completa
 
+## Navegar o código: Graphify primeiro
+
+O repositório está indexado no Graphify (servidor MCP `graphify`). Para
+perguntas de estrutura, usa-o **antes** de grep ou de ler ficheiros inteiros —
+poupa tokens. Passa sempre `repository_id: "Magalvo/GetInAtlas"` (o workspace
+tem outros repositórios).
+
+| Pergunta                                | Ferramenta                                     |
+| --------------------------------------- | ---------------------------------------------- |
+| Onde está definido X?                   | `graphify_find`                                |
+| Como funciona / onde é tratado X?       | `query_graph` (`skeleton: true` é mais barato) |
+| Quem chama X? / X e vizinhos            | `graphify_callers` / `graphify_node`           |
+| O que parte se mudar X?                 | `graphify_impact` (`include_risk: true`)       |
+| Que testes cobrem X?                    | `graphify_tests_for`                           |
+| De quem depende / quem usa um ficheiro? | `graphify_file_neighbors`                      |
+
+O índice reflete a `origin/main` no momento da indexação: não vê branches
+locais nem alterações por commitar. Antes de editar, lê sempre o ficheiro real.
+Para strings literais, config e specs, usa pesquisa de texto.
+
 ## Estrutura
 
 As specs vivem em **quatro camadas** (ADR-0006). Cada tópico vive numa só
